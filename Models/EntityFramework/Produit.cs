@@ -39,7 +39,7 @@ namespace API_TD1_1.Models.EntityFramework
         public int StockMin { get; set; }
 
         [Column("pro_stockmax")]
-        public int SockMax { get; set; }
+        public int StockMax { get; set; }
 
 
 

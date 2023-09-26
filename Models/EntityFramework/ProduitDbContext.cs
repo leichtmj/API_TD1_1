@@ -45,10 +45,6 @@ namespace API_TD1_1.Models.EntityFramework
             OnModelCreatingPartial(modelBuilder);
         }
 
-
-
-
-
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 
     }
