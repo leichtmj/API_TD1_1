@@ -10,6 +10,7 @@ namespace API_TD1_1.Models.EntityFramework
         [Column("pro_id")]
         public int IdProduit { get; set; }
 
+        [Required]
         [Column("pro_nom")]
         [MaxLength(80)]
         public string NomProduit { get; set; }

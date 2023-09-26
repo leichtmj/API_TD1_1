@@ -11,10 +11,10 @@ namespace API_TD1_1.Models.EntityFramework
         [Column("typ_id")]
         public int IdTypeProduit { get; set; }
 
+        [Required]
         [Column("typ_nom")]
         [MaxLength(85)]
         public string NomTypeProduit { get; set; }
-
 
         [InverseProperty("TypeProduitNavigation")]
         public virtual ICollection<Produit> ProduitsNavigation { get; set; } = new List<Produit>();

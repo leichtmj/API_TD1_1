@@ -1,4 +1,6 @@
+using API_TD1_1.Models.DataManager;
 using API_TD1_1.Models.EntityFramework;
+using API_TD1_1.Models.Repository;
 using Microsoft.EntityFrameworkCore;
 
 namespace API_TD1_1
@@ -17,6 +19,10 @@ namespace API_TD1_1
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddDbContext<ProduitDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("ProduitDBContext")));
+            builder.Services.AddScoped<IDataRepository<Produit>, ProduitManager>();
+            builder.Services.AddScoped<IDataRepository<Marque>, MarqueManager>();
+            builder.Services.AddScoped<IDataRepository<TypeProduit>, TypeProduitManager>();
+
 
 
             var app = builder.Build();
@@ -28,10 +34,9 @@ namespace API_TD1_1
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
-            app.UseAuthorization();
-
+            //app.UseAuthorization();
 
             app.MapControllers();
 

@@ -2,6 +2,7 @@
 using API_TD1_1.Models.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API_TD1_1.Migrations
 {
     [DbContext(typeof(ProduitDbContext))]
-    partial class ProduitDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230926144042_FixCheck")]
+    partial class FixCheck
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,7 +72,6 @@ namespace API_TD1_1.Migrations
                         .HasColumnName("pro_nomphoto");
 
                     b.Property<string>("NomProduit")
-                        .IsRequired()
                         .HasMaxLength(80)
                         .HasColumnType("character varying(80)")
                         .HasColumnName("pro_nom");
@@ -112,7 +113,6 @@ namespace API_TD1_1.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("IdTypeProduit"));
 
                     b.Property<string>("NomTypeProduit")
-                        .IsRequired()
                         .HasMaxLength(85)
                         .HasColumnType("character varying(85)")
                         .HasColumnName("typ_nom");

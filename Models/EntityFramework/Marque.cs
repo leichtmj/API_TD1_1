@@ -12,6 +12,7 @@ namespace API_TD1_1.Models.EntityFramework
         public int IdMarque { get; set; }
 
         [Column("mar_nom")]
+        [Required]
         [MaxLength(85)]
         public string NomMarque { get; set; }
 

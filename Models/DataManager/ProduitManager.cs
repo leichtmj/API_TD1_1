@@ -11,6 +11,7 @@ namespace API_TD1_1.Models.DataManager
 
         public ProduitManager()
         {
+
         }
 
         public ProduitManager(ProduitDbContext context)

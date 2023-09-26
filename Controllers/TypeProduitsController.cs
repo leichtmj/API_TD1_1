@@ -94,14 +94,14 @@ namespace API_TD1_1.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Produit>> PostType(TypeProduit produit)
+        public async Task<ActionResult<TypeProduit>> PostType(TypeProduit produit)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             await dataRepository.AddAsync(produit);
-            return CreatedAtAction("GetProduitById", new { id = produit.IdTypeProduit }, produit);
+            return CreatedAtAction("GetTypeById", new { id = produit.IdTypeProduit }, produit);
         }
 
         // DELETE: api/Produit/5
