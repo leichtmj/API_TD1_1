@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API_TD1_1.Models.EntityFramework;
 using API_TD1_1.Models.Repository;
+using API_TD1_1.Models.DTO;
 
 namespace API_TD1_1.Controllers
 {
@@ -14,20 +15,25 @@ namespace API_TD1_1.Controllers
     [ApiController]
     public class ProduitsController : ControllerBase
     {
-        private readonly IDataRepository<Produit> dataRepository;
+        private readonly IDataRepository<Produit> dataRepositoryProduit;
+        private readonly IDataRepositoryProduitDetailDTO dataRepositoryProduitDetailDTO;
+        private readonly IDataRepositoryProduitDTO dataRepositoryProduitDTO;
 
-        public ProduitsController(IDataRepository<Produit> dataRepo)
+        public ProduitsController(IDataRepository<Produit> dataRepo, IDataRepositoryProduitDetailDTO dataRepoDetailDTO, IDataRepositoryProduitDTO dataRepoProduitDTO)
         {
-            dataRepository = dataRepo;
+            dataRepositoryProduit = dataRepo;
+            dataRepositoryProduitDetailDTO = dataRepoDetailDTO;
+            dataRepositoryProduitDTO = dataRepoProduitDTO;
+
         }
 
         // GET: api/Produit
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<Produit>>> GetProduits()
+        public async Task<ActionResult<IEnumerable<ProduitDTO>>> GetProduits()
         {
-            return await dataRepository.GetAllAsync();
+            return await dataRepositoryProduitDTO.GetAllAsync();
         }
 
         // GET: api/Produit/ById/5
@@ -35,9 +41,9 @@ namespace API_TD1_1.Controllers
         [Route("ById/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Produit>> GetProduitById(int id)
+        public async Task<ActionResult<ProduitDetailDTO>> GetProduitById(int id)
         {
-            var produit = await dataRepository.GetByIdAsync(id);
+            var produit = await dataRepositoryProduitDetailDTO.GetByIdAsync(id);
 
             if (produit.Value == null)
             {
@@ -52,9 +58,9 @@ namespace API_TD1_1.Controllers
         [Route("ByNom/{str}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Produit>> GetProduitByString(string str)
+        public async Task<ActionResult<ProduitDetailDTO>> GetProduitByString(string str)
         {
-            var produit = await dataRepository.GetByStringAsync(str);
+            var produit = await dataRepositoryProduitDetailDTO.GetByStringAsync(str);
 
             if (produit.Value == null)
             {
@@ -69,14 +75,15 @@ namespace API_TD1_1.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutProduit(int id, Produit produit)
+        public async Task<IActionResult> PutProduit(int id, ProduitDetailDTO produit)
         {
-            if (id != produit.IdProduit)
+            if (id != produit.Id)
             {
                 return BadRequest();
             }
 
-            var accToUpdate = await dataRepository.GetByIdAsync(id);
+//faire un getbyid interne
+            var accToUpdate = await dataRepositoryProduitDetailDTO.GetByIdAsync(id);
 
             if (accToUpdate.Value == null)
             {
@@ -84,7 +91,7 @@ namespace API_TD1_1.Controllers
             }
             else
             {
-                await dataRepository.UpdateAsync(accToUpdate.Value, produit);
+                await dataRepositoryProduit.UpdateAsync(accToUpdate.Value, produit);
                 return NoContent();
             }
         }
