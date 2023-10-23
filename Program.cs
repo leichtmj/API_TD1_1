@@ -2,6 +2,8 @@ using API_TD1_1.Models.DataManager;
 using API_TD1_1.Models.EntityFramework;
 using API_TD1_1.Models.Repository;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using API_TD1_1.Models.DTO;
 
 namespace API_TD1_1
 {
@@ -20,8 +22,12 @@ namespace API_TD1_1
 
             builder.Services.AddDbContext<ProduitDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("ProduitDBContext")));
             builder.Services.AddScoped<IDataRepository<Produit>, ProduitManager>();
+            builder.Services.AddScoped<IDataRepositoryDetailDTO<ProduitDetailDTO>, ProduitManager>();
+            builder.Services.AddScoped<IDataRepositoryDTO<ProduitDTO>, ProduitManager>();
             builder.Services.AddScoped<IDataRepository<Marque>, MarqueManager>();
             builder.Services.AddScoped<IDataRepository<TypeProduit>, TypeProduitManager>();
+
+            builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 
 

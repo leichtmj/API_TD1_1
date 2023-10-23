@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API_TD1_1.Models.Repository
 {
-    public interface IDataRepositoryProduitDTO
+    public interface IDataRepositoryDTO<TEntity>
     {
-        Task<ActionResult<IEnumerable<ProduitDTO>>> GetAllAsync();
+        Task<ActionResult<IEnumerable<TEntity>>> GetAllAsync();
     }
 }

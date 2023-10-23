@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API_TD1_1.Models.DataManager
 {
-    public class ProduitManager : IDataRepository<Produit>, IDataRepositoryProduitDTO, IDataRepositoryProduitDetailDTO
+    public class ProduitManager : IDataRepository<Produit>, IDataRepositoryDTO<ProduitDTO>, IDataRepositoryDetailDTO<ProduitDetailDTO>
     {
         readonly ProduitDbContext produitdbcontext;
 
@@ -81,8 +81,13 @@ namespace API_TD1_1.Models.DataManager
             await produitdbcontext.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Produit taille, Produit entity)
+        public async Task UpdateAsync(ProduitDetailDTO prodToUpdate, ProduitDetailDTO newProd)
         {
+            var marque = await produitdbcontext.Marques.Select(m => new Marque
+            {
+
+            }).;
+
             produitdbcontext.Entry(taille).State = EntityState.Modified;
             taille.IdProduit = entity.IdProduit;
             taille.NomProduit = entity.NomProduit;

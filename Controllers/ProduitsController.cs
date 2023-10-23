@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using API_TD1_1.Models.EntityFramework;
 using API_TD1_1.Models.Repository;
 using API_TD1_1.Models.DTO;
+using AutoMapper;
+
 
 namespace API_TD1_1.Controllers
 {
@@ -16,14 +18,17 @@ namespace API_TD1_1.Controllers
     public class ProduitsController : ControllerBase
     {
         private readonly IDataRepository<Produit> dataRepositoryProduit;
-        private readonly IDataRepositoryProduitDetailDTO dataRepositoryProduitDetailDTO;
-        private readonly IDataRepositoryProduitDTO dataRepositoryProduitDTO;
+        private readonly IDataRepositoryDetailDTO<ProduitDetailDTO> dataRepositoryProduitDetailDTO;
+        private readonly IDataRepositoryDTO<ProduitDTO> dataRepositoryProduitDTO;
+        private readonly IMapper _mapper;
 
-        public ProduitsController(IDataRepository<Produit> dataRepo, IDataRepositoryProduitDetailDTO dataRepoDetailDTO, IDataRepositoryProduitDTO dataRepoProduitDTO)
+
+        public ProduitsController(IDataRepository<Produit> dataRepo, IDataRepositoryDetailDTO<ProduitDetailDTO> dataRepoDetailDTO, IDataRepositoryDTO<ProduitDTO> dataRepoProduitDTO, IMapper mapper)
         {
             dataRepositoryProduit = dataRepo;
             dataRepositoryProduitDetailDTO = dataRepoDetailDTO;
             dataRepositoryProduitDTO = dataRepoProduitDTO;
+            _mapper = mapper;
 
         }
 
@@ -75,23 +80,23 @@ namespace API_TD1_1.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutProduit(int id, ProduitDetailDTO produit)
+        public async Task<IActionResult> PutProduit(int id, Produit produit)
         {
-            if (id != produit.Id)
+            if (id != produit.IdProduit)
             {
                 return BadRequest();
             }
 
-//faire un getbyid interne
-            var accToUpdate = await dataRepositoryProduitDetailDTO.GetByIdAsync(id);
+            var prodToUpdate = await dataRepositoryProduitDetailDTO.GetByIdAsync(id);
 
-            if (accToUpdate.Value == null)
+            if (prodToUpdate.Value == null)
             {
                 return NotFound();
             }
             else
             {
-                await dataRepositoryProduit.UpdateAsync(accToUpdate.Value, produit);
+                var produitToUpdate = _mapper.Map<ProduitDetailDTO, Produit>(prodToUpdate.Value);
+                await dataRepositoryProduit.UpdateAsync(produitToUpdate, produit);
                 return NoContent();
             }
         }
@@ -107,7 +112,8 @@ namespace API_TD1_1.Controllers
             {
                 return BadRequest(ModelState);
             }
-            await dataRepository.AddAsync(produit);
+            await dataRepositoryProduit.AddAsync(produit);
+
             return CreatedAtAction("GetProduitById", new { id = produit.IdProduit }, produit);
         }
 
@@ -117,14 +123,21 @@ namespace API_TD1_1.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteProduit(int id)
         {
-            var produit = await dataRepository.GetByIdAsync(id);
+            var produit = await dataRepositoryProduitDetailDTO.GetByIdAsync(id);
 
             if (produit.Value == null)
             {
                 return NotFound();
             }
 
-            await dataRepository.DeleteAsync(produit.Value);
+            //var produitToDelete = _mapper.Map<ProduitDetailDTO, Produit>(produit.Value);
+
+            Produit p = new Produit
+            {
+                IdProduit = produit.Value.Id
+            };
+
+            await dataRepositoryProduit.DeleteAsync(p);
             return NoContent();
         }
     }
