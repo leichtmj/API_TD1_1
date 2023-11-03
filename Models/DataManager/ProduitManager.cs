@@ -1,19 +1,18 @@
 ﻿using API_TD1_1.Models.DTO;
 using API_TD1_1.Models.EntityFramework;
 using API_TD1_1.Models.Repository;
+using API_TD1_1.Models.Repository.ProduitRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API_TD1_1.Models.DataManager
 {
-    public class ProduitManager : IDataRepository<Produit>, IDataRepositoryDTO<ProduitDTO>, IDataRepositoryDetailDTO<ProduitDetailDTO>
+    public class ProduitManager : IDataRepository<Produit>, IDataRepositoryProduitDTO, IDataRepositoryProduitDetailDTO
     {
         readonly ProduitDbContext produitdbcontext;
 
         public ProduitManager()
-        {
-
-        }
+        { }
 
         public ProduitManager(ProduitDbContext context)
         {
@@ -81,24 +80,19 @@ namespace API_TD1_1.Models.DataManager
             await produitdbcontext.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(ProduitDetailDTO prodToUpdate, ProduitDetailDTO newProd)
+        public async Task UpdateAsync(Produit prodToUpdate, Produit newProd)
         {
-            var marque = await produitdbcontext.Marques.Select(m => new Marque
-            {
-
-            }).;
-
-            produitdbcontext.Entry(taille).State = EntityState.Modified;
-            taille.IdProduit = entity.IdProduit;
-            taille.NomProduit = entity.NomProduit;
-            taille.Description = entity.Description;
-            taille.NomPhoto = entity.NomPhoto;
-            taille.UriPhoto = entity.UriPhoto;
-            taille.IdTypeProduit = entity.IdTypeProduit;
-            taille.IdMarque = entity.IdMarque;
-            taille.StockMin = entity.StockMin;
-            taille.StockReel = entity.StockReel;
-            taille.StockMax = entity.StockMax;
+            produitdbcontext.Entry(prodToUpdate).State = EntityState.Modified;
+            prodToUpdate.IdProduit = newProd.IdProduit;
+            prodToUpdate.NomProduit = newProd.NomProduit;
+            prodToUpdate.Description = newProd.Description;
+            prodToUpdate.NomPhoto = newProd.NomPhoto;
+            prodToUpdate.UriPhoto = newProd.UriPhoto;
+            prodToUpdate.IdTypeProduit = newProd.IdTypeProduit;
+            prodToUpdate.IdMarque = newProd.IdMarque;
+            prodToUpdate.StockMin = newProd.StockMin;
+            prodToUpdate.StockReel = newProd.StockReel;
+            prodToUpdate.StockMax = newProd.StockMax;
             await produitdbcontext.SaveChangesAsync();
         }
 
@@ -106,6 +100,36 @@ namespace API_TD1_1.Models.DataManager
         {
             produitdbcontext.Produits.Remove(entity);
             await produitdbcontext.SaveChangesAsync();
+        }
+
+
+        public async Task<Produit> MapDetailDtoToProduit(ProduitDetailDTO produitDetailDTO)
+        {
+            var marque = await produitdbcontext.Marques.Select(m => new Marque
+            {
+                IdMarque = m.IdMarque,
+                NomMarque = m.NomMarque
+            }).FirstOrDefaultAsync(m => m.NomMarque == produitDetailDTO.Marque);
+
+            var typeProd = await produitdbcontext.TypeProduits.Select(m => new TypeProduit
+            {
+                IdTypeProduit = m.IdTypeProduit,
+                NomTypeProduit = m.NomTypeProduit
+            }).FirstOrDefaultAsync(m => m.NomTypeProduit == produitDetailDTO.Type);
+
+            Produit p = new Produit
+            {
+                IdProduit = produitDetailDTO.Id,
+                NomProduit = produitDetailDTO.Nom,
+                Description = produitDetailDTO.Description,
+                NomPhoto = produitDetailDTO.Nomphoto,
+                UriPhoto = produitDetailDTO.Uriphoto,
+                IdTypeProduit = typeProd.IdTypeProduit,
+                IdMarque = marque.IdMarque,
+                StockReel = produitDetailDTO.Stock
+            };
+
+            return p;
         }
     }
 }

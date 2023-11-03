@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore;
 using API_TD1_1.Models.EntityFramework;
 using API_TD1_1.Models.Repository;
+using API_TD1_1.Models.Repository.MarqueRepository;
+using API_TD1_1.Models.DTO;
 
 namespace API_TD1_1.Models.DataManager
 {
-    public class MarqueManager : IDataRepository<Marque>
+    public class MarqueManager : IDataRepository<Marque>, IDataRepositoryMarqueDTO
     {
         readonly ProduitDbContext produitdbcontext;
 
@@ -20,17 +22,46 @@ namespace API_TD1_1.Models.DataManager
             produitdbcontext = context;
         }
 
-        public async Task<ActionResult<IEnumerable<Marque>>> GetAllAsync()
+        public async Task<ActionResult<IEnumerable<MarqueDTO>>> GetAllAsync()
         {
-            return await produitdbcontext.Marques.ToListAsync();
+
+            var produitsDTO = await produitdbcontext.Marques.Select(marqueToDTO => new MarqueDTO
+            {
+
+                Id = marqueToDTO.IdMarque,
+                Nom = marqueToDTO.NomMarque,
+                NbProduits = marqueToDTO.ProduitsNavigation.Count
+
+            }).ToListAsync();
+
+            return produitsDTO;
         }
-        public async Task<ActionResult<Marque>> GetByIdAsync(int id)
+
+        public async Task<ActionResult<MarqueDTO>> GetByIdAsync(int id)
         {
-            return await produitdbcontext.Marques.FirstOrDefaultAsync(ta => ta.IdMarque == id);
+            var marqueDTO = await produitdbcontext.Marques.Select(marqueToDTO => new MarqueDTO
+            {
+
+                Id = marqueToDTO.IdMarque,
+                Nom = marqueToDTO.NomMarque,
+                NbProduits = marqueToDTO.ProduitsNavigation.Count
+
+            }).FirstOrDefaultAsync(m => m.Id == id);
+
+            return marqueDTO;
         }
-        public async Task<ActionResult<Marque>> GetByStringAsync(string str)
+        public async Task<ActionResult<MarqueDTO>> GetByStringAsync(string str)
         {
-            return await produitdbcontext.Marques.FirstOrDefaultAsync(ta => ta.NomMarque.ToUpper() == str.ToUpper());
+            var marqueDTO = await produitdbcontext.Marques.Select(marqueToDTO => new MarqueDTO
+            {
+
+                Id = marqueToDTO.IdMarque,
+                Nom = marqueToDTO.NomMarque,
+                NbProduits = marqueToDTO.ProduitsNavigation.Count
+
+            }).FirstOrDefaultAsync(m => m.Nom == str);
+
+            return marqueDTO;
         }
         public async Task AddAsync(Marque entity)
         {
@@ -49,6 +80,18 @@ namespace API_TD1_1.Models.DataManager
         {
             produitdbcontext.Marques.Remove(entity);
             await produitdbcontext.SaveChangesAsync();
+        }
+
+        public async Task<Marque> MapMarqueDtoToMarque(MarqueDTO produitDetailDTO)
+        {
+
+            Marque m = new Marque
+            {
+                IdMarque = produitDetailDTO.Id,
+                NomMarque = produitDetailDTO.Nom
+            };
+
+            return m;
         }
     }
 }

@@ -9,7 +9,7 @@ using API_TD1_1.Models.EntityFramework;
 using API_TD1_1.Models.Repository;
 using API_TD1_1.Models.DTO;
 using AutoMapper;
-
+using API_TD1_1.Models.Repository.ProduitRepository;
 
 namespace API_TD1_1.Controllers
 {
@@ -18,18 +18,16 @@ namespace API_TD1_1.Controllers
     public class ProduitsController : ControllerBase
     {
         private readonly IDataRepository<Produit> dataRepositoryProduit;
-        private readonly IDataRepositoryDetailDTO<ProduitDetailDTO> dataRepositoryProduitDetailDTO;
-        private readonly IDataRepositoryDTO<ProduitDTO> dataRepositoryProduitDTO;
-        private readonly IMapper _mapper;
+        private readonly IDataRepositoryProduitDetailDTO dataRepositoryProduitDetailDTO;
+        private readonly IDataRepositoryProduitDTO dataRepositoryProduitDTO;
+      
 
 
-        public ProduitsController(IDataRepository<Produit> dataRepo, IDataRepositoryDetailDTO<ProduitDetailDTO> dataRepoDetailDTO, IDataRepositoryDTO<ProduitDTO> dataRepoProduitDTO, IMapper mapper)
+        public ProduitsController(IDataRepository<Produit> dataRepo, IDataRepositoryProduitDetailDTO dataRepoDetailDTO, IDataRepositoryProduitDTO dataRepoProduitDTO)
         {
             dataRepositoryProduit = dataRepo;
             dataRepositoryProduitDetailDTO = dataRepoDetailDTO;
             dataRepositoryProduitDTO = dataRepoProduitDTO;
-            _mapper = mapper;
-
         }
 
         // GET: api/Produit
@@ -80,14 +78,17 @@ namespace API_TD1_1.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutProduit(int id, Produit produit)
+        public async Task<IActionResult> PutProduit(int id, ProduitDetailDTO produit)
         {
-            if (id != produit.IdProduit)
+            if (id != produit.Id)
             {
                 return BadRequest();
             }
 
+            var mappedProduit = await dataRepositoryProduitDetailDTO.MapDetailDtoToProduit(produit);
+
             var prodToUpdate = await dataRepositoryProduitDetailDTO.GetByIdAsync(id);
+            var mappedProdToUpdate = await dataRepositoryProduitDetailDTO.MapDetailDtoToProduit(prodToUpdate.Value);
 
             if (prodToUpdate.Value == null)
             {
@@ -95,8 +96,8 @@ namespace API_TD1_1.Controllers
             }
             else
             {
-                var produitToUpdate = _mapper.Map<ProduitDetailDTO, Produit>(prodToUpdate.Value);
-                await dataRepositoryProduit.UpdateAsync(produitToUpdate, produit);
+
+                await dataRepositoryProduit.UpdateAsync(mappedProdToUpdate, mappedProduit);
                 return NoContent();
             }
         }
@@ -106,15 +107,16 @@ namespace API_TD1_1.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Produit>> PostProduit(Produit produit)
+        public async Task<ActionResult<Produit>> PostProduit(ProduitDetailDTO produit)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            await dataRepositoryProduit.AddAsync(produit);
+            var p = await dataRepositoryProduitDetailDTO.MapDetailDtoToProduit(produit);
+            await dataRepositoryProduit.AddAsync(p);
 
-            return CreatedAtAction("GetProduitById", new { id = produit.IdProduit }, produit);
+            return CreatedAtAction("GetProduitById", new { id = p.IdProduit }, p);
         }
 
         // DELETE: api/Produit/5
@@ -130,12 +132,7 @@ namespace API_TD1_1.Controllers
                 return NotFound();
             }
 
-            //var produitToDelete = _mapper.Map<ProduitDetailDTO, Produit>(produit.Value);
-
-            Produit p = new Produit
-            {
-                IdProduit = produit.Value.Id
-            };
+            var p = await dataRepositoryProduitDetailDTO.MapDetailDtoToProduit(produit.Value);
 
             await dataRepositoryProduit.DeleteAsync(p);
             return NoContent();
