@@ -6,6 +6,7 @@ using AutoMapper;
 using API_TD1_1.Models.DTO;
 using API_TD1_1.Models.Repository.ProduitRepository;
 using API_TD1_1.Models.Repository.MarqueRepository;
+using API_TD1_1.Models.Repository.TypeProduitRepository;
 
 namespace API_TD1_1
 {
@@ -31,6 +32,8 @@ namespace API_TD1_1
             builder.Services.AddScoped<IDataRepositoryMarqueDTO, MarqueManager>();
 
             builder.Services.AddScoped<IDataRepository<TypeProduit>, TypeProduitManager>();
+            builder.Services.AddScoped<IDataRepositoryTypeProduitDTO, TypeProduitManager>();
+
 
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
 

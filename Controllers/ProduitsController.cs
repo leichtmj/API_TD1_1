@@ -78,14 +78,12 @@ namespace API_TD1_1.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutProduit(int id, ProduitDetailDTO produit)
+        public async Task<IActionResult> PutProduit(int id, Produit produit)
         {
-            if (id != produit.Id)
+            if (id != produit.IdProduit)
             {
                 return BadRequest();
             }
-
-            var mappedProduit = await dataRepositoryProduitDetailDTO.MapDetailDtoToProduit(produit);
 
             var prodToUpdate = await dataRepositoryProduitDetailDTO.GetByIdAsync(id);
             var mappedProdToUpdate = await dataRepositoryProduitDetailDTO.MapDetailDtoToProduit(prodToUpdate.Value);
@@ -97,7 +95,7 @@ namespace API_TD1_1.Controllers
             else
             {
 
-                await dataRepositoryProduit.UpdateAsync(mappedProdToUpdate, mappedProduit);
+                await dataRepositoryProduit.UpdateAsync(mappedProdToUpdate, produit);
                 return NoContent();
             }
         }
@@ -107,13 +105,13 @@ namespace API_TD1_1.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Produit>> PostProduit(ProduitDetailDTO produit)
+        public async Task<ActionResult<Produit>> PostProduit(Produit p)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var p = await dataRepositoryProduitDetailDTO.MapDetailDtoToProduit(produit);
+
             await dataRepositoryProduit.AddAsync(p);
 
             return CreatedAtAction("GetProduitById", new { id = p.IdProduit }, p);

@@ -68,6 +68,7 @@ namespace API_TD1_1.Models.DataManager
             await produitdbcontext.Marques.AddAsync(entity);
             await produitdbcontext.SaveChangesAsync();
         }
+
         public async Task UpdateAsync(Marque taille, Marque entity)
         {
             produitdbcontext.Entry(taille).State = EntityState.Modified;

@@ -67,13 +67,12 @@ namespace API_TD1_1.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> PutMarque(int id, MarqueDTO marque)
+        public async Task<IActionResult> PutMarque(int id, Marque marque)
         {
-            if (id != marque.Id)
+            if (id != marque.IdMarque)
             {
                 return BadRequest();
             }
-            var mappedMarque = await dataRepositoryMarqueDTO.MapMarqueDtoToMarque(marque);
 
             var marqueToUpdate = await dataRepositoryMarqueDTO.GetByIdAsync(id);
 
@@ -84,7 +83,7 @@ namespace API_TD1_1.Controllers
             else
             {
                 var mappedMarqueToUpdate = await dataRepositoryMarqueDTO.MapMarqueDtoToMarque(marqueToUpdate.Value);
-                await dataRepository.UpdateAsync(mappedMarqueToUpdate, mappedMarque);
+                await dataRepository.UpdateAsync(mappedMarqueToUpdate, marque);
                 return NoContent();
             }
         }
@@ -94,15 +93,14 @@ namespace API_TD1_1.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Marque>> PostMarque(MarqueDTO marque)
+        public async Task<ActionResult<Marque>> PostMarque(Marque marque)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var mappedMarque = await dataRepositoryMarqueDTO.MapMarqueDtoToMarque(marque);
-            await dataRepository.AddAsync(mappedMarque);
-            return CreatedAtAction("GetMarqueById", new { id = mappedMarque.IdMarque }, mappedMarque);
+            await dataRepository.AddAsync(marque);
+            return CreatedAtAction("GetMarqueById", new { id = marque.IdMarque }, marque);
         }
 
         // DELETE: api/Marque/5

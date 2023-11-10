@@ -42,9 +42,6 @@ namespace API_TD1_1.Models.EntityFramework
         [Column("pro_stockmax")]
         public int StockMax { get; set; }
 
-
-
-
         [ForeignKey("IdTypeProduit")]
         [InverseProperty("ProduitsNavigation")]
         public virtual TypeProduit TypeProduitNavigation { get; set; } = null;
@@ -53,9 +50,5 @@ namespace API_TD1_1.Models.EntityFramework
         [ForeignKey("IdMarque")]
         [InverseProperty("ProduitsNavigation")]
         public virtual Marque MarqueNavigation { get; set; } = null;
-
-
-
-
     }
 }

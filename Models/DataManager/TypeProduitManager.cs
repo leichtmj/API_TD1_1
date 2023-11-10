@@ -1,11 +1,13 @@
-﻿using API_TD1_1.Models.EntityFramework;
+﻿using API_TD1_1.Models.DTO;
+using API_TD1_1.Models.EntityFramework;
 using API_TD1_1.Models.Repository;
+using API_TD1_1.Models.Repository.TypeProduitRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API_TD1_1.Models.DataManager
 {
-    public class TypeProduitManager : IDataRepository<TypeProduit>
+    public class TypeProduitManager : IDataRepository<TypeProduit>, IDataRepositoryTypeProduitDTO
     {
         readonly ProduitDbContext produitdbcontext;
 
@@ -18,17 +20,44 @@ namespace API_TD1_1.Models.DataManager
             produitdbcontext = context;
         }
 
-        public async Task<ActionResult<IEnumerable<TypeProduit>>> GetAllAsync()
+        public async Task<ActionResult<IEnumerable<TypeProduitDTO>>> GetAllAsync()
         {
-            return await produitdbcontext.TypeProduits.ToListAsync();
+            var typeProduitsDTO = await produitdbcontext.TypeProduits.Select(typeProduit => new TypeProduitDTO
+            {
+
+                Id = typeProduit.IdTypeProduit,
+                Nom = typeProduit.NomTypeProduit,
+                NbProduits = typeProduit.ProduitsNavigation.Count
+
+            }).ToListAsync();
+
+            return typeProduitsDTO;
         }
-        public async Task<ActionResult<TypeProduit>> GetByIdAsync(int id)
+        public async Task<ActionResult<TypeProduitDTO>> GetByIdAsync(int id)
         {
-            return await produitdbcontext.TypeProduits.FirstOrDefaultAsync(ta => ta.IdTypeProduit == id);
+            var typeProduitDTO = await produitdbcontext.TypeProduits.Select(typeProduit => new TypeProduitDTO
+            {
+
+                Id = typeProduit.IdTypeProduit,
+                Nom = typeProduit.NomTypeProduit,
+                NbProduits = typeProduit.ProduitsNavigation.Count
+
+            }).FirstOrDefaultAsync(p=>p.Id==id);
+
+            return typeProduitDTO;
         }
-        public async Task<ActionResult<TypeProduit>> GetByStringAsync(string str)
+        public async Task<ActionResult<TypeProduitDTO>> GetByStringAsync(string str)
         {
-            return await produitdbcontext.TypeProduits.FirstOrDefaultAsync(ta => ta.NomTypeProduit.ToUpper() == str.ToUpper());
+            var typeProduitDTO = await produitdbcontext.TypeProduits.Select(typeProduit => new TypeProduitDTO
+            {
+
+                Id = typeProduit.IdTypeProduit,
+                Nom = typeProduit.NomTypeProduit,
+                NbProduits = typeProduit.ProduitsNavigation.Count
+
+            }).FirstOrDefaultAsync(p => p.Nom == str);
+
+            return typeProduitDTO;
         }
         public async Task AddAsync(TypeProduit entity)
         {
@@ -47,6 +76,19 @@ namespace API_TD1_1.Models.DataManager
         {
             produitdbcontext.TypeProduits.Remove(entity);
             await produitdbcontext.SaveChangesAsync();
+        }
+
+
+        public async Task<TypeProduit> MapMarqueDtoToMarque(TypeProduitDTO typeProduitDTO)
+        {
+
+            TypeProduit t = new TypeProduit
+            {
+                IdTypeProduit = typeProduitDTO.Id,
+                NomTypeProduit = typeProduitDTO.Nom
+            };
+
+            return t;
         }
     }
 }
