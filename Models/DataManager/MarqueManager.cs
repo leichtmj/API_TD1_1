@@ -25,7 +25,7 @@ namespace API_TD1_1.Models.DataManager
         public async Task<ActionResult<IEnumerable<MarqueDTO>>> GetAllAsync()
         {
 
-            var produitsDTO = await produitdbcontext.Marques.Select(marqueToDTO => new MarqueDTO
+            var produitsDTO = await produitdbcontext.Marques.Select(marqueToDTO => new MarqueDTO()
             {
 
                 Id = marqueToDTO.IdMarque,
@@ -39,7 +39,7 @@ namespace API_TD1_1.Models.DataManager
 
         public async Task<ActionResult<MarqueDTO>> GetByIdAsync(int id)
         {
-            var marqueDTO = await produitdbcontext.Marques.Select(marqueToDTO => new MarqueDTO
+            var marqueDTO = await produitdbcontext.Marques.Select(marqueToDTO => new MarqueDTO()
             {
 
                 Id = marqueToDTO.IdMarque,
@@ -52,7 +52,7 @@ namespace API_TD1_1.Models.DataManager
         }
         public async Task<ActionResult<MarqueDTO>> GetByStringAsync(string str)
         {
-            var marqueDTO = await produitdbcontext.Marques.Select(marqueToDTO => new MarqueDTO
+            var marqueDTO = await produitdbcontext.Marques.Select(marqueToDTO => new MarqueDTO()
             {
 
                 Id = marqueToDTO.IdMarque,
@@ -86,7 +86,7 @@ namespace API_TD1_1.Models.DataManager
         public async Task<Marque> MapMarqueDtoToMarque(MarqueDTO produitDetailDTO)
         {
 
-            Marque m = new Marque
+            Marque m = new Marque()
             {
                 IdMarque = produitDetailDTO.Id,
                 NomMarque = produitDetailDTO.Nom

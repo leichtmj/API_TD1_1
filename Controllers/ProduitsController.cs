@@ -86,7 +86,6 @@ namespace API_TD1_1.Controllers
             }
 
             var prodToUpdate = await dataRepositoryProduitDetailDTO.GetByIdAsync(id);
-            var mappedProdToUpdate = await dataRepositoryProduitDetailDTO.MapDetailDtoToProduit(prodToUpdate.Value);
 
             if (prodToUpdate.Value == null)
             {
@@ -95,6 +94,7 @@ namespace API_TD1_1.Controllers
             else
             {
 
+                var mappedProdToUpdate = await dataRepositoryProduitDetailDTO.MapDetailDtoToProduit(prodToUpdate.Value);
                 await dataRepositoryProduit.UpdateAsync(mappedProdToUpdate, produit);
                 return NoContent();
             }

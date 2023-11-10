@@ -22,7 +22,7 @@ namespace API_TD1_1.Models.DataManager
 
         public async Task<ActionResult<IEnumerable<TypeProduitDTO>>> GetAllAsync()
         {
-            var typeProduitsDTO = await produitdbcontext.TypeProduits.Select(typeProduit => new TypeProduitDTO
+            var typeProduitsDTO = await produitdbcontext.TypeProduits.Select(typeProduit => new TypeProduitDTO()
             {
 
                 Id = typeProduit.IdTypeProduit,
@@ -35,7 +35,7 @@ namespace API_TD1_1.Models.DataManager
         }
         public async Task<ActionResult<TypeProduitDTO>> GetByIdAsync(int id)
         {
-            var typeProduitDTO = await produitdbcontext.TypeProduits.Select(typeProduit => new TypeProduitDTO
+            var typeProduitDTO = await produitdbcontext.TypeProduits.Select(typeProduit => new TypeProduitDTO()
             {
 
                 Id = typeProduit.IdTypeProduit,
@@ -48,7 +48,7 @@ namespace API_TD1_1.Models.DataManager
         }
         public async Task<ActionResult<TypeProduitDTO>> GetByStringAsync(string str)
         {
-            var typeProduitDTO = await produitdbcontext.TypeProduits.Select(typeProduit => new TypeProduitDTO
+            var typeProduitDTO = await produitdbcontext.TypeProduits.Select(typeProduit => new TypeProduitDTO()
             {
 
                 Id = typeProduit.IdTypeProduit,
@@ -82,7 +82,7 @@ namespace API_TD1_1.Models.DataManager
         public async Task<TypeProduit> MapMarqueDtoToMarque(TypeProduitDTO typeProduitDTO)
         {
 
-            TypeProduit t = new TypeProduit
+            TypeProduit t = new TypeProduit()
             {
                 IdTypeProduit = typeProduitDTO.Id,
                 NomTypeProduit = typeProduitDTO.Nom

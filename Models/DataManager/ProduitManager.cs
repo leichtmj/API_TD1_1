@@ -21,7 +21,7 @@ namespace API_TD1_1.Models.DataManager
 
         public async Task<ActionResult<IEnumerable<ProduitDTO>>> GetAllAsync()
         {
-            var produitsDTO = await produitdbcontext.Produits.Select(productToDTO => new ProduitDTO{
+            var produitsDTO = await produitdbcontext.Produits.Select(productToDTO => new ProduitDTO(){
 
                 Id = productToDTO.IdProduit,
                 Nom = productToDTO.NomProduit,
@@ -35,7 +35,7 @@ namespace API_TD1_1.Models.DataManager
 
         public async Task<ActionResult<ProduitDetailDTO>> GetByIdAsync(int id)
         {
-            var produitDTO = await produitdbcontext.Produits.Select(productToDTO => new ProduitDetailDTO
+            var produitDTO = await produitdbcontext.Produits.Select(productToDTO => new ProduitDetailDTO()
             {
 
                 Id = productToDTO.IdProduit,
@@ -56,7 +56,7 @@ namespace API_TD1_1.Models.DataManager
 
         public async Task<ActionResult<ProduitDetailDTO>> GetByStringAsync(string str)
         {
-            var produitDTO = await produitdbcontext.Produits.Select(productToDTO => new ProduitDetailDTO
+            var produitDTO = await produitdbcontext.Produits.Select(productToDTO => new ProduitDetailDTO()
             {
 
                 Id = productToDTO.IdProduit,
@@ -105,13 +105,13 @@ namespace API_TD1_1.Models.DataManager
 
         public async Task<Produit> MapDetailDtoToProduit(ProduitDetailDTO produitDetailDTO)
         {
-            var marque = await produitdbcontext.Marques.Select(m => new Marque
+            var marque = await produitdbcontext.Marques.Select(m => new Marque()
             {
                 IdMarque = m.IdMarque,
                 NomMarque = m.NomMarque
             }).FirstOrDefaultAsync(m => m.NomMarque == produitDetailDTO.Marque);
 
-            var typeProd = await produitdbcontext.TypeProduits.Select(m => new TypeProduit
+            var typeProd = await produitdbcontext.TypeProduits.Select(m => new TypeProduit()
             {
                 IdTypeProduit = m.IdTypeProduit,
                 NomTypeProduit = m.NomTypeProduit
