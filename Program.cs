@@ -7,6 +7,7 @@ using API_TD1_1.Models.DTO;
 using API_TD1_1.Models.Repository.ProduitRepository;
 using API_TD1_1.Models.Repository.MarqueRepository;
 using API_TD1_1.Models.Repository.TypeProduitRepository;
+using Microsoft.Net.Http.Headers;
 
 namespace API_TD1_1
 {
@@ -47,6 +48,9 @@ namespace API_TD1_1
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
 
             //app.UseHttpsRedirection();
 
